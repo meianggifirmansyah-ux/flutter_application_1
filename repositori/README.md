@@ -36,4 +36,4 @@ UI Blueprint - Design Milestone BAB 4
 - Pemeriksaan keyboard, screen reader, dan kontras WCAG tetap perlu dilakukan sebelum aplikasi dipublikasikan
 
 ## Artefak Desain
-- Link Design Figma : https://www.figma.com/design/T3ILHVRUGHLgU42Kqq8KkY/Untitled?node-id=0-1&p=f&t=8PsxUTo73DmvjsSM-0
+- Link Design Figma : https://www.figma.com/design/T3ILHVRUGHLgU42Kqq8KkY/Untitled?node-id=0-1&t=8PsxUTo73DmvjsSM-1
