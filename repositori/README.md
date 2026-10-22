@@ -1,39 +1,30 @@
-# Perpustakaan Digital
+# Navigation v0.1
 
 ## Deskripsi
-Perpustakaan Digital adalah aplikasi prototype berbasis Flutter yang dirancang untuk membantu pengguna melihat katalog buku, membaca informasi buku, dan memantau daftar pinjaman.
+Aplikasi prototype Flutter sederhana untuk mendemonstrasikan sistem navigasi antarhalaman, pengelolaan state form input, serta penanganan event menggunakan Flutter Web.
 
 ## Milestone Saat Ini
-UI Blueprint
+Navigation v0.1
 
 ## Versi
-UI Blueprint - Design Milestone BAB 4
+v0.1 - Navigation & State Handling
 
-## Ringkasan UI Blueprint
-- Beranda (Home)
-- Masuk (Login)
-- Katalog Buku
-- Detail Buku
-- Pinjaman Saya
-- Profil
+## Daftar Screen
+- Home (`HomePage`): Halaman utama berisi sambutan dan tombol navigasi.
+- Fitur Utama (`FeaturePage`): Halaman yang menampilkan daftar fitur/tugas menggunakan Card dan ListTile.
+- Profil (`ProfilePage`): Halaman input pengguna menggunakan TextField interaktif dan SnackBar.
 
-## Style Guide Singkat
-- Warna utama: Biru / `Color(0xFF2563EB)` / `#2563EB`
-- Warna teks utama: `#111827`
-- Warna teks sekunder: `#6B7280`
-- Warna latar: `#F8FAFC`
-- Warna border: `#E5E7EB`
-- Panel/kartu: Putih / `#FFFFFF`
-- Komponen tombol dan panel: widget Flutter seperti `Container`, `Text`, `Icon`, `Row`, dan `Column`
-- Ukuran teks isi: sekitar 14 logical pixels, dengan label pendukung sekitar 10–12 logical pixels
-- Touch target: usahakan minimum sekitar 48×48 dp untuk elemen interaktif
+## Fitur BAB 5
+- Navigasi antarhalaman menggunakan `Navigator.push` dan `MaterialPageRoute`.
+- Tombol kembali ke halaman sebelumnya menggunakan `Navigator.pop`.
+- Event handling untuk interaksi tombol menggunakan `onPressed`.
+- Input pengguna sederhana menggunakan `TextField` dan `TextEditingController`.
+- Respons dinamis berupa notifikasi pesan menggunakan `SnackBar`.
 
-## Accessibility Dasar
-- Teks dibuat mudah dibaca dengan warna teks gelap di atas latar terang
-- Informasi status buku menggunakan label teks, tidak hanya mengandalkan warna
-- Ukuran dan jarak elemen dibuat agar konten mudah dipahami
-- Alur screen maju dan kembali dijelaskan pada dokumen blueprint
-- Pemeriksaan keyboard, screen reader, dan kontras WCAG tetap perlu dilakukan sebelum aplikasi dipublikasikan
+## Cara Menjalankan
+flutter clean
+flutter pub get
+flutter run -d chrome 
 
-## Artefak Desain
-- Link Design Figma : https://www.figma.com/design/T3ILHVRUGHLgU42Kqq8KkY/Untitled?node-id=0-1&t=8PsxUTo73DmvjsSM-1
+## Catatan AI
+disini saya gunakan untuk debugging untuk menganalisis log error pada konsol flutter web

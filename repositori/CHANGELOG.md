@@ -1,19 +1,16 @@
 # CHANGELOG
 
-## UI Blueprint - Design Milestone
-Tanggal: 2026-10-13
+## v0.1 - Navigation
+Tanggal: 2026-10-22
 
 Perubahan:
-- Menentukan enam screen utama aplikasi: Beranda, Masuk, Katalog Buku, Detail Buku, Pinjaman Saya, dan Profil.
-- Menyusun wireframe sederhana untuk screen utama.
-- Membuat style guide dengan warna biru, putih, abu-abu terang, dan warna teks pendukung.
-- Menambahkan checklist accessibility dasar.
-- Mendokumentasikan alur maju dan alur kembali antar-screen.
-- Memperbarui README dengan ringkasan UI Blueprint.
-- Menyimpan artefak desain pada folder `docs/ui-blueprint/`.
-- Menambahkan catatan batasan implementasi bahwa beberapa navigasi dan fitur masih berupa prototype UI.
+- Menambahkan tiga screen utama (`HomePage`, `FeaturePage`, dan `ProfilePage`).
+- Menambahkan navigasi dari Home ke screen lain menggunakan `Navigator.push`.
+- Menambahkan tombol kembali menggunakan `Navigator.pop`.
+- Menambahkan event handling pada tombol menggunakan `onPressed`.
+- Menambahkan input pengguna sederhana menggunakan `TextField` dan `TextEditingController`.
+- Menambahkan respons sederhana menggunakan `SnackBar` pada halaman profil.
+- Memperbarui README dengan daftar screen, detail fitur BAB 5, dan cara menjalankan aplikasi menggunakan renderer HTML.
 
 Bukti:
-- Dokumen wireframe dan style guide tersedia pada `docs/ui-blueprint/UI_BLUEPRINT.md`.
-- File README tersedia pada `README.md`.
-- Commit Git dapat ditambahkan setelah perubahan disimpan dan di-commit pada repository.
+- Sudah saya kirim melalui submission pada LMS
