@@ -1,16 +1,21 @@
 # CHANGELOG
 
 ## v0.1 - Navigation
-Tanggal: 2026-10-22
+Tanggal: 2026-10-27
 
 Perubahan:
-- Menambahkan tiga screen utama (`HomePage`, `FeaturePage`, dan `ProfilePage`).
-- Menambahkan navigasi dari Home ke screen lain menggunakan `Navigator.push`.
-- Menambahkan tombol kembali menggunakan `Navigator.pop`.
-- Menambahkan event handling pada tombol menggunakan `onPressed`.
-- Menambahkan input pengguna sederhana menggunakan `TextField` dan `TextEditingController`.
-- Menambahkan respons sederhana menggunakan `SnackBar` pada halaman profil.
-- Memperbarui README dengan daftar screen, detail fitur BAB 5, dan cara menjalankan aplikasi menggunakan renderer HTML.
+- Menambahkan form input pengguna.   
+- Menggunakan TextFormField untuk input yang divalidasi.
+- Menambahkan validasi input wajib diisi.
+- Menambahkan validasi panjang minimal atau format sederhana.
+- Menambahkan pesan error pada input tidak valid.
+- Menambahkan SnackBar sebagai user feedback.
+- Menambahkan state sederhana untuk menampilkan status input.   Memastikan navigasi v0.1 tetap berjalan. 
 
 Bukti:
 - Sudah saya kirim melalui submission pada LMS
+
+## v0.1 - Navigation
+Navigation v0.1
+
+
