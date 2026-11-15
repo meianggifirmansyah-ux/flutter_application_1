@@ -1,6 +1,8 @@
+
 import 'package:flutter/material.dart';
 import '../models/task.dart';
 import '../widgets/task_card.dart';
+import '../services/book_storage.dart';
 import 'form_page.dart';
 
 class DataPage extends StatefulWidget {
@@ -11,123 +13,338 @@ class DataPage extends StatefulWidget {
 }
 
 class _DataPageState extends State<DataPage> {
-  // Local / Mock Data awal
-  final List<Task> _tasks = [
-    Task(
-      id: 1,
-      title: 'Senja di Perpustakaan',
-      author: 'A. Kurniawan',
-      pages: 240,
-      available: true,
-      color: const Color(0xFF314B5A),
-    ),
-    Task(
-      id: 2,
-      title: 'Ilmu Alam untuk Pemula',
-      author: 'Dr. Lestari',
-      pages: 312,
-      available: false,
-      color: const Color(0xFF65816A),
-    ),
-  ];
+  List<Task> _tasks = [];
+  bool _isLoading = true;
+  String _searchQuery = '';
 
-  int _nextId = 3;
+  // Mock Data awal
+  List<Task> _initialBooks() {
+    return [
+      Task(
+        id: 1,
+        title: 'Senja di Perpustakaan',
+        author: 'A. Kurniawan',
+        pages: 240,
+        available: true,
+        color: const Color(0xFF314B5A),
+      ),
+      Task(
+        id: 2,
+        title: 'Ilmu Alam untuk Pemula',
+        author: 'Dr. Lestari',
+        pages: 312,
+        available: false,
+        color: const Color(0xFF65816A),
+      ),
+    ];
+  }
 
-  // Fungsi Create / Tambah Data (Menerima hasil dari FormPage)
-  void _navigateAndAddForm(BuildContext context) async {
+  int get _nextId {
+    if (_tasks.isEmpty) return 1;
+
+    return _tasks
+            .map((book) => book.id)
+            .reduce((a, b) => a > b ? a : b) +
+        1;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBooks();
+  }
+
+  // MEMUAT DATA BUKU
+  Future<void> _loadBooks() async {
+    final hasSaved = await BookStorage.hasSavedBooks();
+
+    List<Task> loadedBooks;
+
+    if (hasSaved) {
+      loadedBooks = await BookStorage.loadBooks();
+    } else {
+      loadedBooks = _initialBooks();
+      await BookStorage.saveBooks(loadedBooks);
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _tasks = loadedBooks;
+      _isLoading = false;
+    });
+  }
+
+  // MENYIMPAN DATA
+  Future<void> _saveBooks() async {
+    await BookStorage.saveBooks(_tasks);
+  }
+
+  // TAMBAH DAN EDIT BUKU
+  Future<void> _openForm({Task? task, int? index}) async {
     final result = await Navigator.push<Task>(
       context,
       MaterialPageRoute(
-        builder: (context) => FormPage(nextId: _nextId),
+        builder: (_) => FormPage(
+          nextId: task?.id ?? _nextId,
+          taskToEdit: task,
+        ),
       ),
     );
 
-    if (result != null) {
-      setState(() {
-        _tasks.add(result);
-        _nextId++;
-      });
+    if (!mounted || result == null) return;
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Data buku berhasil ditambahkan!')),
-        );
-      }
-    }
-  }
-
-  // Fungsi Update Sederhana
-  void _updateTask(int index) {
     setState(() {
-      _tasks[index].title = '${_tasks[index].title} (Revisi)';
+      if (index == null) {
+        _tasks.add(result);
+      } else {
+        _tasks[index] = result;
+      }
     });
+
+    await _saveBooks();
+
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Data berhasil diperbarui')),
+      SnackBar(
+        content: Text(
+          index == null
+              ? 'Buku berhasil ditambahkan!'
+              : 'Buku berhasil diperbarui!',
+        ),
+      ),
     );
   }
 
-  // Fungsi Delete dengan Dialog Konfirmasi (UX Penguatan)
-  void _confirmDelete(int index) {
-    showDialog(
+  // EDIT SEDERHANA
+  Future<void> _updateTask(int index) async {
+    setState(() {
+      _tasks[index].title = '${_tasks[index].title} (Revisi)';
+    });
+
+    await _saveBooks();
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Data buku berhasil diperbarui.'),
+      ),
+    );
+  }
+
+  // HAPUS BUKU
+  Future<void> _confirmDelete(int index) async {
+    final confirm = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Konfirmasi Hapus'),
-          content: const Text('Apakah Anda yakin ingin menghapus buku ini?'),
+          content: Text(
+            'Apakah Anda yakin ingin menghapus '
+            '"${_tasks[index].title}"?',
+          ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
+              onPressed: () => Navigator.pop(dialogContext, false),
               child: const Text('Batal'),
             ),
             TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-                setState(() {
-                  _tasks.removeAt(index);
-                });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Data berhasil dihapus')),
-                );
-              },
-              child: const Text('Hapus', style: TextStyle(color: Colors.red)),
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text(
+                'Hapus',
+                style: TextStyle(color: Colors.red),
+              ),
             ),
           ],
         );
       },
     );
+
+    if (!mounted || confirm != true) return;
+
+    setState(() {
+      _tasks.removeAt(index);
+    });
+
+    await _saveBooks();
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Buku berhasil dihapus.'),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final filteredBooks = _tasks.where((book) {
+      final query = _searchQuery.toLowerCase();
+
+      return book.title.toLowerCase().contains(query) ||
+          book.author.toLowerCase().contains(query);
+    }).toList();
+
     return Scaffold(
+      backgroundColor: const Color(0xFFF7F8FA),
+
       appBar: AppBar(
-        title: const Text('Data Module v0.3 (CRUD)'),
-        backgroundColor: const Color(0xFF2563EB),
-        foregroundColor: Colors.white,
-      ),
-      // Empty State Handling
-      body: _tasks.isEmpty
-          ? const Center(
-              child: Text(
-                'Belum ada data koleksi buku.\nSilakan tambahkan data baru.',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Color(0xFF6B7280), fontSize: 14),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Katalog Buku',
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w800,
               ),
-            )
-          : ListView.builder(
-              itemCount: _tasks.length,
-              itemBuilder: (context, index) {
-                return TaskCard(
-                  task: _tasks[index],
-                  onEdit: () => _updateTask(index),
-                  onDelete: () => _confirmDelete(index),
-                );
-              },
             ),
+            Text(
+              'Temukan bacaan berikutnya',
+              style: TextStyle(
+                fontSize: 10,
+                color: Color(0xFF8B94A2),
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 16),
+            child: CircleAvatar(
+              radius: 16,
+              backgroundColor: Color(0xFFEDF4FF),
+              child: Text(
+                'AK',
+                style: TextStyle(
+                  color: Color(0xFF2864E8),
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+              children: [
+                // KOLOM PENCARIAN
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+                  child: TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        _searchQuery = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Cari buku, penulis, atau topik',
+                      hintStyle: const TextStyle(fontSize: 11),
+                      prefixIcon: const Icon(Icons.search, size: 20),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(13),
+                        borderSide: const BorderSide(
+                          color: Color(0xFFE8ECF2),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // JUMLAH BUKU
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        '${filteredBooks.length} buku ditemukan',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const Spacer(),
+                      const Text(
+                        'Koleksi buku',
+                        style: TextStyle(
+                          color: Color(0xFF2864E8),
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // DAFTAR BUKU
+                Expanded(
+                  child: filteredBooks.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.menu_book_outlined,
+                                size: 48,
+                                color: Color(0xFFADB7C5),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                _tasks.isEmpty
+                                    ? 'Belum ada koleksi buku.'
+                                    : 'Buku tidak ditemukan.',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          itemCount: filteredBooks.length,
+                          itemBuilder: (context, index) {
+                            final task = filteredBooks[index];
+                            final originalIndex = _tasks.indexOf(task);
+
+                            return TaskCard(
+                              task: task,
+                              onEdit: () => _openForm(
+                                task: task,
+                                index: originalIndex,
+                              ),
+                              onDelete: () =>
+                                  _confirmDelete(originalIndex),
+                              onTap: () =>
+                                  _updateTask(originalIndex),
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
+
+      // TOMBOL TAMBAH BUKU
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _navigateAndAddForm(context),
-        backgroundColor: const Color(0xFF2563EB),
-        child: const Icon(Icons.add, color: Colors.white),
+        backgroundColor: const Color(0xFF2864E8),
+        foregroundColor: Colors.white,
+        onPressed: _isLoading ? null : () => _openForm(),
+        child: const Icon(Icons.add),
       ),
     );
   }

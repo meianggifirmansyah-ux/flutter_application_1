@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 class Task {
@@ -16,4 +17,28 @@ class Task {
     required this.available,
     required this.color,
   });
+
+  // Mengubah data buku menjadi JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'author': author,
+      'pages': pages,
+      'available': available,
+      'color': color.toARGB32(),
+    };
+  }
+
+  // Membaca JSON menjadi objek Task
+  factory Task.fromJson(Map<String, dynamic> json) {
+    return Task(
+      id: json['id'] as int,
+      title: json['title'] as String,
+      author: json['author'] as String,
+      pages: json['pages'] as int,
+      available: json['available'] as bool,
+      color: Color(json['color'] as int),
+    );
+  }
 }

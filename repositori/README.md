@@ -1,13 +1,13 @@
-# Navigation v0.1
+# Data Module v0.3
 
 ## Deskripsi
 Aplikasi prototype Flutter sederhana untuk mendemonstrasikan sistem navigasi antarhalaman, pengelolaan state form input, serta penanganan event menggunakan Flutter Web.
 
 ## Milestone Saat Ini
-Form & Validation v0.2
+Data Module v0.3
 
 ## Versi
-v0.2 - Form & Validation
+v0.3 - Data Module
 
 ## Daftar Screen
 - Home (`HomePage`): Halaman utama berisi sambutan dan tombol navigasi.
@@ -16,16 +16,27 @@ v0.2 - Form & Validation
 - FormPage (`Form Validasi`): Halaman form input yang dilengkapi validasi (validator) untuk memasukkan data buku baru (Judul, Penulis, Jumlah Halaman) yang kemudian dikirimkan kembali ke DataPage.
 - DataPage (Data Module / Katalog): Halaman utama untuk mengelola data buku yang menerapkan operasi CRUD (Create, Read, Update, Delete), lengkap dengan empty state dan user feedback (SnackBar & dialog konfirmasi hapus).
 
-## Fitur BAB 6
-- Menambahkan form input tervalidasi (Form & TextFormField).
+## Model Data
+Task:
+- id
+- title
+- author
+- pages 
+- available
 
-- Menambahkan aturan validasi input wajib diisi, panjang karakter, dan tipe data.
+## Sumber Data
+Data sementara di memori aplikasi menggunakan List dan mock data.
 
-- Menampilkan pesan error yang jelas pada input tidak valid.
-
-- Menampilkan user feedback menggunakan SnackBar.
-
-- Menggunakan state sederhana (StatefulWidget & setState).
+## Fitur BAB 7
+- Menambahkan model data sederhana.
+- Menambahkan local/mock data.
+- Menampilkan daftar data menggunakan ListView.builder.
+- Menambahkan fitur tambah data.
+- Menambahkan fitur ubah data sederhana.
+- Menambahkan fitur hapus data.
+- Menambahkan empty state ketika data kosong.
+- Menambahkan SnackBar sebagai user feedback.
+- Memastikan navigasi v0.1 dan Form & Validation v0.2 tetap berjalan.   
 
 ## Aturan Validasi
 - Judul Buku: Wajib diisi dan minimal 3 karakter.
@@ -33,18 +44,17 @@ v0.2 - Form & Validation
 - Jumlah Halaman: Wajib diisi dan harus berupa angka yang valid.
 
 ## Skenario Uji
-Form kosong (menampilkan pesan error validasi) 
-- Judul buku terlalu pendek (< 3 karakter)
-- Jumlah halaman bukan angka
-- Form valid (data berhasil disimpan ke list dan SnackBar muncul)  
-- Read data awal dan data baru
-- Update data buku
-- Delete data buku dengan dialog konfirmasi
-- Tampilan Empty State saat data kosong 
-- Navigasi antar halaman tetap berjalan lancar
+
+- Data awal tampil.
+- Tambah data.
+- Ubah data.
+- Hapus data.
+- Empty state.
+- Navigasi tetap berjalan.
+- Form lama tetap berjalan.
 
 ## Bukti Running
 Tambahkan screenshot atau link video singkat aplikasi berjalan.
 
 ## Catatan AI
-Disini saya menggunakan AI untuk membantu menjelaskan cara kerja validasi pada TextFormField, meninjau fungsi setState pada pengelolaan list CRUD
+Disini saya menggunakan AI untuk membantu Menjelaskan fungsi List<Task>, setState(), dan ListView.builder.
